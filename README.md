@@ -21,7 +21,7 @@ Efficiently storing and retrieving URL strings presents several key challenges:
 - Universal Hashing + Linear Probing - Better distribution, still simple
 - Universal Hashing + Quadratic Probing - Best overall performance
 
-### Hash Functions
+## Hash Functions
 #### Division Hashing
 - Method: Polynomial rolling hash with base 31
   - Formula: hash = (hash * 31 + char) % tableSize
