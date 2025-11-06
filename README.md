@@ -1,5 +1,6 @@
 # URL Hash Table with Open Addressing
-[![C++11+](https://img.shields.io![License](https://img.shields.io/badge/License-Academic-greens](https://img.shields.io)
+[![C++11+](https://img.shields.io)
+![License](https://img.shields.io/badge/License-Academic-greens)
 
 A high-performance C++ hash table implementation for storing and searching URLs using open addressing collision resolution.
 
