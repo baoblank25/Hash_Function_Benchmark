@@ -49,7 +49,7 @@ Efficiently storing and retrieving URL strings presents several key challenges:
   - Advantages: Reduces clustering, better distribution
   - Disadvantages: Slightly more complex computation
 
-### Features
+## Features
 - Dual Hash Functions - Compare Division and Universal hashing approaches
 - Dual Probing Methods - Implement Linear and Quadratic probing strategies
 - Real-time Performance Tracking - Measure comparisons, execution time, and statistics
@@ -79,13 +79,13 @@ Load Factor	Probing Method	Avg Error	Status
 0.7	Quadratic	±2.4	Acceptable
 0.9	Quadratic	±3.8	Degraded
 ```
-### Quick Start
-#### Prerequisites
+## Quick Start
+### Prerequisites
 - C++11 or higher
 - g++, clang, or MSVC compiler
 - Windows, Linux, or macOS
 
-#### Installation
+### Installation
 - Step 1: Clone Repository
 ```text
 bash
@@ -165,7 +165,7 @@ Performance Ratio: 1.00
 
 End
 ```
-### Project Structure
+## Project Structure
 ```text
 URLHashTable/
 ├── include/
@@ -184,7 +184,7 @@ URLHashTable/
 ├── build.bat                 # Windows build script
 └── README.md                 # This file
 ```
-### Key Design Decisions
+## Key Design Decisions
 #### Why Multiple Configurations?
 - Each configuration serves a specific purpose:
   - Division + Linear: Fastest for low load factors
