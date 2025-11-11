@@ -1,29 +1,23 @@
 // ASU CSE310 Hash Table Assignment
 // File: HashFunctions.h
-// Description: Hash function declarations
-
 
 #ifndef HASHFUNCTIONS_H
 #define HASHFUNCTIONS_H
 
-
 #include <string>
-
-
 using namespace std;
 
-
-class HashFunctions{
+class HashFunctions {
 private:
-    unsigned long a;
-    unsigned long b;
-    unsigned long k;
+    unsigned long k;  // Large odd number
+    unsigned long a;  // Random value for universal hashing
+    unsigned long b;  // Random value for universal hashing
     
 public:
     HashFunctions();
-    unsigned long divisionHash(const string& url, int size);
+    unsigned long bitwiseHash(const string& url, int size);
+    unsigned long polynomialHash(const string& url, int size);
     unsigned long universalHash(const string& url, int size);
 };
-
 
 #endif

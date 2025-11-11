@@ -1,33 +1,27 @@
 // ASU CSE310 Hash Table Assignment
 // File: URLHashTable.cpp
-// Description: Implementation of URLHashTable class
-
+// Description: Implementation using open addressing with linear/quadratic probing
 
 #include "../include/URLHashTable.h"
 #include <iostream>
-
 
 URLHashTable::URLHashTable(int tableSize){
     size = tableSize;
     numElements = 0;
     table.resize(size);
-    current_hType = DIVISION_HASH;
+    current_hType = BITWISE_HASH;
     current_pType = LINEAR_PROBING;
 }
 
-
 URLHashTable::~URLHashTable(){}
-
 
 void URLHashTable::setHashFunction(HashType hashType){
     current_hType = hashType;
 }
 
-
 void URLHashTable::setProbingMethod(ProbingMethod probingType){
     current_pType = probingType;
 }
-
 
 int URLHashTable::probe(unsigned long hash, int i){
     if(current_pType==LINEAR_PROBING){
@@ -38,15 +32,17 @@ int URLHashTable::probe(unsigned long hash, int i){
     }
 }
 
-
 bool URLHashTable::searchURL(const string& url){
     clock_t start = clock();
     int comp = 0;
     bool found = false;
     
     unsigned long hash;
-    if(current_hType==DIVISION_HASH){
-        hash = hashFunc.divisionHash(url, size);
+    if(current_hType==BITWISE_HASH){
+        hash = hashFunc.bitwiseHash(url, size);
+    }
+    else if(current_hType==POLYNOMIAL_HASH){
+        hash = hashFunc.polynomialHash(url, size);
     }
     else{
         hash = hashFunc.universalHash(url, size);
@@ -75,7 +71,7 @@ bool URLHashTable::searchURL(const string& url){
     stats.recordQuery(comp, end-start);
     
     if(found){
-        cout << "\n\"" << url << "\" is found in the hash table." << endl;
+        cout << "\n\"" << url << "\" is a HIT - found in the hash table." << endl;
     }
     else{
         cout << "\n\"" << url << "\" is NOT found in the hash table." << endl;
@@ -84,14 +80,16 @@ bool URLHashTable::searchURL(const string& url){
     return found;
 }
 
-
 bool URLHashTable::insertURL(const string& url){
     clock_t start = clock();
     int comp = 0;
     
     unsigned long hash;
-    if(current_hType==DIVISION_HASH){
-        hash = hashFunc.divisionHash(url, size);
+    if(current_hType==BITWISE_HASH){
+        hash = hashFunc.bitwiseHash(url, size);
+    }
+    else if(current_hType==POLYNOMIAL_HASH){
+        hash = hashFunc.polynomialHash(url, size);
     }
     else{
         hash = hashFunc.universalHash(url, size);
@@ -100,7 +98,7 @@ bool URLHashTable::insertURL(const string& url){
     int idx = hash;
     int i = 0;
     
-    //Check if URL exists
+    // Check if URL exists
     while(i<size){
         comp++;
         
@@ -119,7 +117,7 @@ bool URLHashTable::insertURL(const string& url){
         idx = probe(hash, i);
     }
     
-    //Insert URL
+    // Insert URL
     idx = hash;
     i = 0;
     
@@ -139,9 +137,10 @@ bool URLHashTable::insertURL(const string& url){
     }
     
     cout << "Error: Hash table is full!" << endl;
+    clock_t end = clock();
+    stats.recordQuery(comp, end-start);
     return false;
 }
-
 
 bool URLHashTable::deleteURL(const string& url){
     clock_t start = clock();
@@ -149,8 +148,11 @@ bool URLHashTable::deleteURL(const string& url){
     bool deleted = false;
     
     unsigned long hash;
-    if(current_hType==DIVISION_HASH){
-        hash = hashFunc.divisionHash(url, size);
+    if(current_hType==BITWISE_HASH){
+        hash = hashFunc.bitwiseHash(url, size);
+    }
+    else if(current_hType==POLYNOMIAL_HASH){
+        hash = hashFunc.polynomialHash(url, size);
     }
     else{
         hash = hashFunc.universalHash(url, size);
@@ -191,7 +193,6 @@ bool URLHashTable::deleteURL(const string& url){
     return deleted;
 }
 
-
 void URLHashTable::displayTable(){
     cout << "\nHash Table Contents" << endl;
     for(int i=0; i<size; i++){
@@ -209,11 +210,16 @@ void URLHashTable::displayTable(){
     }
 }
 
-
 void URLHashTable::displayStats(){
-    cout << "\nHash Function: ";
-    if(current_hType==DIVISION_HASH){
-        cout << "Division Hashing" << endl;
+    cout << "HASH STATS" << endl;
+    
+    cout << "\nConfiguration:" << endl;
+    cout << "Hash Function: ";
+    if(current_hType==BITWISE_HASH){
+        cout << "Bitwise Mixing Hash (MurmurHash-style)" << endl;
+    }
+    else if(current_hType==POLYNOMIAL_HASH){
+        cout << "Polynomial Rolling Hash (DJB2-style)" << endl;
     }
     else{
         cout << "Universal Hashing" << endl;
@@ -227,24 +233,21 @@ void URLHashTable::displayStats(){
         cout << "Quadratic Probing" << endl;
     }
     
-    stats.display(size, numElements, getLoadFactor());
-}
+    stats.display(size, numElements, getLoadFactor(), current_hType);
 
+}
 
 void URLHashTable::resetStats(){
     stats.reset();
 }
 
-
 double URLHashTable::getLoadFactor(){
     return (double)numElements/size;
 }
 
-
 int URLHashTable::getSize(){
     return size;
 }
-
 
 int URLHashTable::getNumElements(){
     return numElements;
