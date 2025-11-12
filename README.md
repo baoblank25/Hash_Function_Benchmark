@@ -130,8 +130,8 @@ hash ^= hash >> 16;
 
 **Step 1: Clone Repository**
 ```
-git clone https://github.com/baoblank25/URLHashTable.git
-cd URLHashTable
+git clone https://github.com/baoblank25/URL_Hashtesting.git
+cd URL_Hashtesting
 ```
 
 **Step 2: Compile**

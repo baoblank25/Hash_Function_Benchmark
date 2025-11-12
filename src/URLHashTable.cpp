@@ -52,15 +52,16 @@ bool URLHashTable::searchURL(const string& url){
     int i = 0;
     
     while(i<size){
-        comp++;
-        
         if(table[idx].status==EMPTY){
             break;
         }
         
-        if(table[idx].status==OCCUPIED && table[idx].url==url){
-            found = true;
-            break;
+        if(table[idx].status==OCCUPIED){
+            comp++;  // Count URL string comparison
+            if(table[idx].url==url){
+                found = true;
+                break;
+            }
         }
         
         i++;
@@ -97,43 +98,46 @@ bool URLHashTable::insertURL(const string& url){
     
     int idx = hash;
     int i = 0;
+    int firstAvailable = -1;
     
-    // Check if URL exists
+    // Search for URL and track first available slot
     while(i<size){
-        comp++;
-        
         if(table[idx].status==EMPTY){
+            // Found empty slot - URL doesn't exist
+            if(firstAvailable == -1){
+                firstAvailable = idx;
+            }
             break;
         }
         
-        if(table[idx].status==OCCUPIED && table[idx].url==url){
-            clock_t end = clock();
-            stats.recordQuery(comp, end-start);
-            cout << "\n\"" << url << "\" is a HIT - already exists in the hash table." << endl;
-            return false;
+        if(table[idx].status==DELETED && firstAvailable == -1){
+            // Remember first deleted slot for insertion
+            firstAvailable = idx;
+        }
+        
+        if(table[idx].status==OCCUPIED){
+            comp++;  // Count URL string comparison
+            if(table[idx].url==url){
+                clock_t end = clock();
+                stats.recordQuery(comp, end-start);
+                cout << "\n\"" << url << "\" is a HIT - already exists in the hash table." << endl;
+                return false;
+            }
         }
         
         i++;
         idx = probe(hash, i);
     }
     
-    // Insert URL
-    idx = hash;
-    i = 0;
-    
-    while(i<size){
-        if(table[idx].status==EMPTY || table[idx].status==DELETED){
-            table[idx].url = url;
-            table[idx].status = OCCUPIED;
-            numElements++;
-            
-            clock_t end = clock();
-            stats.recordQuery(comp, end-start);
-            return true;
-        }
+    // Insert URL at first available slot
+    if(firstAvailable != -1){
+        table[firstAvailable].url = url;
+        table[firstAvailable].status = OCCUPIED;
+        numElements++;
         
-        i++;
-        idx = probe(hash, i);
+        clock_t end = clock();
+        stats.recordQuery(comp, end-start);
+        return true;
     }
     
     cout << "Error: Hash table is full!" << endl;
@@ -162,18 +166,19 @@ bool URLHashTable::deleteURL(const string& url){
     int i = 0;
     
     while(i<size){
-        comp++;
-        
         if(table[idx].status==EMPTY){
             break;
         }
         
-        if(table[idx].status==OCCUPIED && table[idx].url==url){
-            table[idx].status = DELETED;
-            table[idx].url = "";
-            numElements--;
-            deleted = true;
-            break;
+        if(table[idx].status==OCCUPIED){
+            comp++;  // Count URL string comparison
+            if(table[idx].url==url){
+                table[idx].status = DELETED;
+                table[idx].url = "";
+                numElements--;
+                deleted = true;
+                break;
+            }
         }
         
         i++;

@@ -42,7 +42,7 @@ unsigned long HashFunctions::polynomialHash(const string& url, int size){
         hash = (hash * prime + (unsigned char)url[i]) % size;
     }
     
-    return hash % size;
+    return hash;  // Already < size from loop
 }
 
 // Universal hash function as specified in assignment
@@ -56,7 +56,7 @@ unsigned long HashFunctions::universalHash(const string& url, int size){
         hashValue = (hashValue*256+(unsigned char)url[i])%kHsize;
     }
     
-    // Apply universal hash formula
+    // Apply universal hash formula - result is already in [0, size-1]
     hashValue = ((a*hashValue+b)%kHsize)/k;
-    return hashValue%size;
+    return hashValue;
 }
